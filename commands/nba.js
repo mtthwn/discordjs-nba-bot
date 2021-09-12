@@ -78,7 +78,6 @@ module.exports = {
         .setTitle(`${player.first_name} ${player.last_name}`)
         .setDescription(`Player stats for the ${season} season`)
         .addFields(
-          { name: 'Team', value: player.team.full_name },
           { name: 'Position', value: player.position },
           {
             name: 'Height',
