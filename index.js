@@ -21,20 +21,17 @@ for (const file of eventFiles) {
 }
 
 client.commands = new Collection();
-const commandFiles = readdirSync('./commands').filter((file) =>
-  file.endsWith('.js'),
-);
+
+const commandFiles = ['ping', 'server', 'user', 'nba'];
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
 
-  client.commands.set(command.data.name, command);
+  client.commands.set(file, command);
 }
 
 client.once('ready', async () => {
   console.log('Ready!');
-  const test = await db.getAll();
-  console.log(test);
 });
 
 client.on('interactionCreate', async (interaction) => {
