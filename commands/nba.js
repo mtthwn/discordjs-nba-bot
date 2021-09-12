@@ -34,77 +34,80 @@ const data = new SlashCommandBuilder()
 module.exports = {
   data,
   async execute(interaction) {
-    const [firstName, lastName] = await interaction.options
-      .getString('player_name')
-      .split(' ');
+    try {
+      const [firstName, lastName] = await interaction.options
+        .getString('player_name')
+        .split(' ');
 
-    const season = await interaction.options.getInteger('season');
+      const season = await interaction.options.getInteger('season');
 
-    const searchUrl =
-      PLAYER_SEARCH_URI + `${firstName || ''} ${lastName || ''}`;
+      const searchUrl =
+        PLAYER_SEARCH_URI + `${firstName || ''} ${lastName || ''}`;
 
-    const { data: playerData } = await axios.get(searchUrl);
+      const { data: playerData } = await axios.get(searchUrl);
 
-    if (!playerData) {
-      return await interaction.reply('No player found');
+      if (!playerData) {
+        return await interaction.reply('No player found');
+      }
+
+      const { data: returnedPlayers } = playerData;
+
+      const embeds = [];
+
+      for (const player of returnedPlayers) {
+        const PLAYER_STATS_SEARCH_URI = `https://www.balldontlie.io/api/v1/season_averages?season=${season}&player_ids[]=${player.id}`;
+
+        const returnedSeasonStats = await axios.get(PLAYER_STATS_SEARCH_URI);
+
+        const { data: seasonData } = returnedSeasonStats.data;
+
+        if (!seasonData[0]) {
+          return await interaction.reply('Invalid season');
+        }
+
+        const { pts, games_played, min } = seasonData[0];
+
+        const height = player.height_feet
+          ? `${player.height_feet} ft ${player.height_inches} in`
+          : 'No height data available';
+
+        const embed = new MessageEmbed()
+          .setColor('#0099ff')
+          .setTitle(`${player.first_name} ${player.last_name}`)
+          .setDescription(`Player stats for the ${season} regular season`)
+          .addFields(
+            {
+              name: 'Position',
+              value:
+                player.position.length > 0
+                  ? player.position
+                  : 'No position data available',
+            },
+            {
+              name: 'Height',
+              value: height,
+            },
+            { name: 'Games played', value: games_played.toString() },
+            { name: 'Minutes per game', value: min.toString() },
+            {
+              name: 'PPG',
+              value: pts.toString(),
+            },
+          )
+          .setTimestamp();
+
+        embeds.push(embed);
+      }
+
+      if (embeds.length === 0) {
+        return await interaction.reply('Invalid data');
+      }
+      await interaction.reply({ embeds });
     }
+    catch (e) {
+      console.error(e);
 
-    const { data: returnedPlayers } = playerData;
-
-    const embeds = [];
-
-    for (const player of returnedPlayers) {
-      const PLAYER_STATS_SEARCH_URI = `https://www.balldontlie.io/api/v1/season_averages?season=${season}&player_ids[]=${player.id}`;
-
-      let returnedSeasonStats;
-
-      try {
-        returnedSeasonStats = await axios.get(PLAYER_STATS_SEARCH_URI);
-      }
-      catch (e) {
-        console.error(e);
-      }
-
-      const { data: seasonData } = returnedSeasonStats.data;
-
-      if (!seasonData[0]) {
-        return await interaction.reply('Invalid season');
-      }
-
-      const { pts, games_played, min } = seasonData[0];
-
-      const height = player.height_feet
-        ? `${player.height_feet} ft ${player.height_inches} in`
-        : 'No height data available';
-
-      const embed = new MessageEmbed()
-        .setColor('#0099ff')
-        .setTitle(`${player.first_name} ${player.last_name}`)
-        .setDescription(`Player stats for the ${season} season`)
-        .addFields(
-          {
-            name: 'Position',
-            value:
-              player.position.length > 0
-                ? player.position
-                : 'No position data available',
-          },
-          {
-            name: 'Height',
-            value: height,
-          },
-          { name: 'Games played', value: games_played.toString() },
-          { name: 'Minutes per game', value: min.toString() },
-          {
-            name: 'PPG',
-            value: pts.toString(),
-          },
-        )
-        .setTimestamp();
-
-      embeds.push(embed);
+      await interaction.reply('Something went wrong');
     }
-
-    interaction.reply({ embeds });
   },
 };
