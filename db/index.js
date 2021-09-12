@@ -5,6 +5,6 @@ const db = require('knex')(connection);
 
 module.exports = {
   async getAll() {
-    return db('company');
+    return db('teams');
   },
 };
