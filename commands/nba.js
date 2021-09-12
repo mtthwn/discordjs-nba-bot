@@ -73,18 +73,28 @@ module.exports = {
 
       const { pts, games_played, min } = seasonData[0];
 
+      const height = player.height_feet
+        ? `${player.height_feet} ft ${player.height_inches} in`
+        : 'No height data available';
+
       const embed = new MessageEmbed()
         .setColor('#0099ff')
         .setTitle(`${player.first_name} ${player.last_name}`)
         .setDescription(`Player stats for the ${season} season`)
         .addFields(
-          { name: 'Position', value: player.position },
+          {
+            name: 'Position',
+            value:
+              player.position.length > 0
+                ? player.position
+                : 'No position data available',
+          },
           {
             name: 'Height',
-            value: `${player.height_feet} ft ${player.height_inches} in`,
+            value: height,
           },
           { name: 'Games played', value: games_played.toString() },
-          { name: 'Minutes per game', value: min },
+          { name: 'Minutes per game', value: min.toString() },
           {
             name: 'PPG',
             value: pts.toString(),
