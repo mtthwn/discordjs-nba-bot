@@ -1,0 +1,6 @@
+{
+    "DISCORD_TOKEN": "YOUR_TOKEN",
+    "guildId": "YOUR_GUILD_ID",
+    "clientId": "YOUR_CLIENT_ID",
+    "DB_CONNECTION_STRING": "CONNECTION_STRING"
+}

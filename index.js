@@ -1,6 +1,7 @@
 const { Client, Collection, Intents } = require('discord.js');
 const { readdirSync } = require('fs');
 
+const db = require('./db');
 const { DISCORD_TOKEN } = require('./config.json');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -32,6 +33,8 @@ for (const file of commandFiles) {
 
 client.once('ready', async () => {
   console.log('Ready!');
+  const test = await db.getAll();
+  console.log(test);
 });
 
 client.on('interactionCreate', async (interaction) => {

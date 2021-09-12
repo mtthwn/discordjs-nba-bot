@@ -13,27 +13,18 @@ for (const file of commandFiles) {
   commands.push(command.data.toJSON());
 }
 
-// const commands = [
-//   new SlashCommandBuilder()
-//     .setName('ping')
-//     .setDescription('Replies with pong!'),
-//   new SlashCommandBuilder()
-//     .setName('server')
-//     .setDescription('Replies with server info!'),
-//   new SlashCommandBuilder()
-//     .setName('user')
-//     .setDescription('Replies with user info!'),
-// ].map((command) => command.toJSON());
-
 const rest = new REST({ version: '9' }).setToken(DISCORD_TOKEN);
 
 (async () => {
   try {
+    console.log('Started refreshing application (/) commands.');
+
+    // scoped to guild, removing guildId scopes globally
     await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
       body: commands,
     });
 
-    console.log('Successfully registered application commands.');
+    console.log('Successfully reloaded application (/) commands.');
   }
   catch (error) {
     console.error(error);
