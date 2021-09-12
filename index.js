@@ -1,7 +1,7 @@
 const { Client, Collection, Intents } = require('discord.js');
 const { readdirSync } = require('fs');
 
-const db = require('./db');
+// const db = require('./db');
 const { DISCORD_TOKEN } = require('./config.json');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });

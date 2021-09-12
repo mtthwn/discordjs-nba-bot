@@ -27,7 +27,12 @@ const data = new SlashCommandBuilder()
           .setRequired(true),
       )
       .addIntegerOption((option) =>
-        option.setName('season').setDescription('Season').setRequired(true),
+        option
+          .setName('season')
+          .setDescription(
+            'The starting year of the season\'s stats you want to query',
+          )
+          .setRequired(true),
       ),
   );
 
@@ -82,25 +87,29 @@ module.exports = {
                 player.position.length > 0
                   ? player.position
                   : 'No position data available',
+              inline: true,
             },
             {
               name: 'Height',
               value: height,
+              inline: true,
             },
-            { name: 'Games played', value: games_played.toString() },
-            { name: 'Minutes per game', value: min.toString() },
+            { name: 'Games played', value: games_played.toString(), inline: true },
+            { name: 'Minutes per game', value: min.toString(), inline: true },
             {
               name: 'PPG',
               value: pts.toString(),
+              inline: true,
             },
           )
-          .setTimestamp();
+          .setTimestamp()
+          .setFooter('Stats sourced from the balldontlie api');
 
         embeds.push(embed);
       }
 
       if (embeds.length === 0) {
-        return await interaction.reply('Invalid data');
+        return await interaction.reply('No data found');
       }
       await interaction.reply({ embeds });
     }
