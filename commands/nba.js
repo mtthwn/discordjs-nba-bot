@@ -70,7 +70,7 @@ module.exports = {
           return await interaction.reply('Invalid season');
         }
 
-        const { pts, games_played, min } = seasonData[0];
+        const { pts, games_played, min, reb, stl, fg_pct } = seasonData[0];
 
         const height = player.height_feet
           ? `${player.height_feet} ft ${player.height_inches} in`
@@ -101,9 +101,24 @@ module.exports = {
               value: pts.toString(),
               inline: true,
             },
+            {
+              name: 'Reb per game',
+              value: reb.toString(),
+              inline: true,
+            },
+            {
+              name: 'Steals per game',
+              value: stl.toString(),
+              inline: true,
+            },
+            {
+              name: 'FG %',
+              value: (fg_pct * 100).toString().substring(0, 5) + '%',
+              inline: true,
+            },
           )
           .setTimestamp()
-          .setFooter('Stats sourced from the balldontlie api');
+          .setFooter('Source: balldontlie.io');
 
         embeds.push(embed);
       }
@@ -111,6 +126,7 @@ module.exports = {
       if (embeds.length === 0) {
         return await interaction.reply('No data found');
       }
+
       await interaction.reply({ embeds });
     }
     catch (e) {
