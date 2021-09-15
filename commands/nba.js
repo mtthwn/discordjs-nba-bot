@@ -1,9 +1,12 @@
-const axios = require('axios');
-const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-const PLAYER_SEARCH_URI = 'https://balldontlie.io/api/v1/players?search=';
-// const ALL_TEAMS_URI = 'https://balldontlie.io/api/v1/teams';
+const Service = require('../util/service');
+const createEmbed = require('../util/createEmbed');
+const Player = require('../classes/Player');
+const PlayerSeasonStats = require('../classes/PlayerSeasonStats');
+const generatePlayerStatsUrl = require('../util/generatePlayerStatsUrl');
+
+const { PLAYER_SEARCH_URI } = require('../constants');
 
 const data = new SlashCommandBuilder()
   .setName('nba')
@@ -49,76 +52,27 @@ module.exports = {
       const searchUrl =
         PLAYER_SEARCH_URI + `${firstName || ''} ${lastName || ''}`;
 
-      const { data: playerData } = await axios.get(searchUrl);
+      const { data: playerData } = await new Service().get(searchUrl);
 
       if (!playerData) {
         return await interaction.reply('No player found');
       }
 
-      const { data: returnedPlayers } = playerData;
-
       const embeds = [];
 
-      for (const player of returnedPlayers) {
-        const PLAYER_STATS_SEARCH_URI = `https://www.balldontlie.io/api/v1/season_averages?season=${season}&player_ids[]=${player.id}`;
+      for (const player of playerData.data) {
+        const generatedPlayer = new Player(player);
+        const PLAYER_STATS_SEARCH_URI = generatePlayerStatsUrl(season, player.id);
 
-        const returnedSeasonStats = await axios.get(PLAYER_STATS_SEARCH_URI);
+        const { data: seasonData } = await new Service().get(PLAYER_STATS_SEARCH_URI);
 
-        const { data: seasonData } = returnedSeasonStats.data;
-
-        if (!seasonData[0]) {
+        if (seasonData.data.length === 0) {
           return await interaction.reply('Invalid season');
         }
 
-        const { pts, games_played, min, reb, stl, fg_pct } = seasonData[0];
+        const generatedSeasonStats = new PlayerSeasonStats({ ...seasonData.data[0], season });
 
-        const height = player.height_feet
-          ? `${player.height_feet} ft ${player.height_inches} in`
-          : 'No height data available';
-
-        const embed = new MessageEmbed()
-          .setColor('#0099ff')
-          .setTitle(`${player.first_name} ${player.last_name}`)
-          .setDescription(`Player stats for the ${season} regular season`)
-          .addFields(
-            {
-              name: 'Position',
-              value:
-                player.position.length > 0
-                  ? player.position
-                  : 'No position data available',
-              inline: true,
-            },
-            {
-              name: 'Height',
-              value: height,
-              inline: true,
-            },
-            { name: 'Games played', value: games_played.toString(), inline: true },
-            { name: 'Minutes per game', value: min.toString(), inline: true },
-            {
-              name: 'PPG',
-              value: pts.toString(),
-              inline: true,
-            },
-            {
-              name: 'Reb per game',
-              value: reb.toString(),
-              inline: true,
-            },
-            {
-              name: 'Steals per game',
-              value: stl.toString(),
-              inline: true,
-            },
-            {
-              name: 'FG %',
-              value: (fg_pct * 100).toString().substring(0, 5) + '%',
-              inline: true,
-            },
-          )
-          .setTimestamp()
-          .setFooter('Source: balldontlie.io');
+        const embed = createEmbed(generatedPlayer, generatedSeasonStats);
 
         embeds.push(embed);
       }
