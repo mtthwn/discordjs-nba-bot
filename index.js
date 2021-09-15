@@ -3,6 +3,7 @@ const { readdirSync } = require('fs');
 
 // const db = require('./db');
 const { DISCORD_TOKEN } = require('./config.json');
+const logger = require('./util/logger');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
@@ -31,7 +32,7 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', async () => {
-  console.log('Ready!');
+  logger.info('Ready!');
 });
 
 client.on('interactionCreate', async (interaction) => {

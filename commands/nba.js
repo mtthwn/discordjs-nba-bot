@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 const { Player, PlayerSeasonStats, Service } = require('../classes');
-const { generatePlayerSearchUrl, generatePlayerStatsUrl, createEmbed } = require('../util');
+const { generatePlayerSearchUrl, generatePlayerStatsUrl, createEmbed, logger } = require('../util');
 
 const data = new SlashCommandBuilder()
   .setName('nba')
@@ -35,9 +35,12 @@ module.exports = {
         .split(' ');
       const season = await interaction.options.getInteger('season');
 
+      logger.info(`playerData request started for ${firstName} ${lastName}`);
       const { data: playerData } = await new Service().get(generatePlayerSearchUrl(firstName, lastName));
+      logger.info(`playerData request complete for ${firstName} ${lastName}`);
 
       if (!playerData) {
+        logger.warn(`playerData not found for ${firstName} ${lastName}`);
         return await interaction.reply('No player found');
       }
 
@@ -66,9 +69,9 @@ module.exports = {
       await interaction.reply({ embeds });
     }
     catch (e) {
-      console.error(e);
+      logger.error(e.message);
 
-      await interaction.reply('Something went wrong');
+      await interaction.reply('Something went wrong with your request');
     }
   },
 };
