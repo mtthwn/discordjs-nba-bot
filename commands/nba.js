@@ -1,24 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-const Service = require('../util/service');
-const createEmbed = require('../util/createEmbed');
-const Player = require('../classes/Player');
-const PlayerSeasonStats = require('../classes/PlayerSeasonStats');
-const generatePlayerStatsUrl = require('../util/generatePlayerStatsUrl');
-
-const { PLAYER_SEARCH_URI } = require('../constants');
+const { Player, PlayerSeasonStats, Service } = require('../classes');
+const { generatePlayerSearchUrl, generatePlayerStatsUrl, createEmbed } = require('../util');
 
 const data = new SlashCommandBuilder()
   .setName('nba')
   .setDescription('Get NBA stats')
-  // .addSubcommand((subCommand) =>
-  //   subCommand
-  //     .setName('team-name')
-  //     .setDescription('Team name')
-  //     .addStringOption((option) =>
-  //       option.setName('team_name').setDescription('Team name'),
-  //     ),
-  // )
   .addSubcommand((subCommand) =>
     subCommand
       .setName('player-search')
@@ -46,13 +33,9 @@ module.exports = {
       const [firstName, lastName] = await interaction.options
         .getString('player_name')
         .split(' ');
-
       const season = await interaction.options.getInteger('season');
 
-      const searchUrl =
-        PLAYER_SEARCH_URI + `${firstName || ''} ${lastName || ''}`;
-
-      const { data: playerData } = await new Service().get(searchUrl);
+      const { data: playerData } = await new Service().get(generatePlayerSearchUrl(firstName, lastName));
 
       if (!playerData) {
         return await interaction.reply('No player found');
@@ -63,9 +46,7 @@ module.exports = {
       for (const player of playerData.data) {
         const generatedPlayer = new Player(player);
 
-        const PLAYER_STATS_SEARCH_URI = generatePlayerStatsUrl(season, player.id);
-
-        const { data: seasonData } = await new Service().get(PLAYER_STATS_SEARCH_URI);
+        const { data: seasonData } = await new Service().get(generatePlayerStatsUrl(season, player.id));
 
         if (seasonData.data.length === 0) {
           continue;
