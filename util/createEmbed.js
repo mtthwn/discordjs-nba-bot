@@ -1,6 +1,8 @@
 const { MessageEmbed } = require('discord.js');
 
 module.exports = (player, stats) => {
+
+  console.log(player);
   const embed = new MessageEmbed()
     .setColor('#0099ff')
     .setTitle(player.fullName)

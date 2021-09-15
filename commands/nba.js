@@ -62,12 +62,13 @@ module.exports = {
 
       for (const player of playerData.data) {
         const generatedPlayer = new Player(player);
+
         const PLAYER_STATS_SEARCH_URI = generatePlayerStatsUrl(season, player.id);
 
         const { data: seasonData } = await new Service().get(PLAYER_STATS_SEARCH_URI);
 
         if (seasonData.data.length === 0) {
-          return await interaction.reply('Invalid season');
+          continue;
         }
 
         const generatedSeasonStats = new PlayerSeasonStats({ ...seasonData.data[0], season });
