@@ -4,7 +4,7 @@ const { Player, PlayerSeasonStats, Service } = require('../classes');
 const { generatePlayerSearchUrl, generatePlayerStatsUrl, createEmbed, logger } = require('../util');
 
 const data = new SlashCommandBuilder()
-  .setName('nba')
+  .setName('nba-stats')
   .setDescription('Get NBA stats')
   .addSubcommand((subCommand) =>
     subCommand
@@ -35,12 +35,12 @@ module.exports = {
         .split(' ');
       const season = await interaction.options.getInteger('season');
 
-      logger.info(`playerData request started for ${firstName} ${lastName}`);
+      logger.info(`playerData request started for ${firstName} ${lastName || ''}`);
       const { data: playerData } = await new Service().get(generatePlayerSearchUrl(firstName, lastName));
-      logger.info(`playerData request complete for ${firstName} ${lastName}`);
+      logger.info(`playerData request complete for ${firstName} ${lastName || ''}`);
 
       if (!playerData) {
-        logger.warn(`playerData not found for ${firstName} ${lastName}`);
+        logger.warn(`playerData not found for ${firstName} ${lastName || ''}`);
         return await interaction.reply('No player found');
       }
 

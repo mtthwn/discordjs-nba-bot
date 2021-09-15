@@ -23,7 +23,7 @@ for (const file of eventFiles) {
 
 client.commands = new Collection();
 
-const commandFiles = ['ping', 'server', 'user', 'nba'];
+const commandFiles = ['ping', 'server', 'user', 'nba-stats'];
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
@@ -44,7 +44,7 @@ client.on('interactionCreate', async (interaction) => {
     await command.execute(interaction);
   }
   catch (error) {
-    console.error(error);
+    logger.error(error);
     await interaction.reply({
       content: 'There was an error while executing this command!',
       ephemeral: true,
