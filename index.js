@@ -25,7 +25,7 @@ for (const file of eventFiles) {
 
 client.commands = new Collection();
 
-const commandFiles = ['ping', 'server', 'user', 'nba-stats'];
+const commandFiles = ['nba-stats'];
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
