@@ -2,44 +2,44 @@ const { MessageEmbed } = require('discord.js');
 
 module.exports = (player, stats) => (new MessageEmbed()
   .setColor('#0099ff')
-  .setTitle(player.fullName)
-  .setDescription(`Player stats for the ${stats.season} regular season`)
+  .setTitle(player.getFullName)
+  .setDescription(`Player stats for the ${stats.getSeason} regular season`)
   .addFields(
     {
       name: 'Position',
-      value: player.position,
+      value: player.getPosition,
       inline: true,
     },
     {
       name: 'Height',
-      value: player.height,
+      value: player.getHeight,
       inline: true,
     },
-    { name: 'Games played', value: stats.gamesPlayed, inline: true },
-    { name: 'Minutes per game', value: stats.min, inline: true },
+    { name: 'Games played', value: stats.getGamesPlayed, inline: true },
+    { name: 'Minutes per game', value: stats.getMinutes, inline: true },
     {
       name: 'PPG',
-      value: stats.points,
+      value: stats.getPoints,
       inline: true,
     },
     {
       name: 'APG',
-      value: stats.assists,
+      value: stats.getAssists,
       inline: true,
     },
     {
       name: 'Reb per game',
-      value: stats.rebounds,
+      value: stats.getRebounds,
       inline: true,
     },
     {
       name: 'Steals per game',
-      value: stats.steals,
+      value: stats.getSteals,
       inline: true,
     },
     {
       name: 'FG %',
-      value: stats.fgPercentage,
+      value: stats.getFgPercentage,
       inline: true,
     },
   )

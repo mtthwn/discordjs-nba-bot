@@ -35,6 +35,10 @@ module.exports = {
         .split(' ');
       const season = await interaction.options.getInteger('season');
 
+      if (season >= 2021) {
+        return await interaction.reply('Invalid season - must be the year the season started in');
+      }
+
       logger.info(`playerData request started for ${firstName} ${lastName || ''}`);
       const { data: playerData } = await new Service().get(generatePlayerSearchUrl(firstName, lastName));
       logger.info(`playerData request complete for ${firstName} ${lastName || ''}`);

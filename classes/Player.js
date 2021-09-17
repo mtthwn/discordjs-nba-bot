@@ -5,6 +5,18 @@ class Player {
     this.fullName = `${first_name} ${last_name}`;
     this.position = position.length > 0 ? position : 'No position data available';
   }
+
+  get getHeight() {
+    return this.height;
+  }
+
+  get getFullName() {
+    return this.fullName;
+  }
+
+  get getPosition() {
+    return this.position;
+  }
 }
 
 module.exports = Player;

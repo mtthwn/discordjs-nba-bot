@@ -9,6 +9,38 @@ class PlayerSeasonStats {
     this.fgPercentage = (fg_pct * 100).toString().substring(0, 5) + '%';
     this.assists = ast.toString();
   }
+
+  get getSeason() {
+    return this.season;
+  }
+
+  get getGamesPlayed() {
+    return this.gamesPlayed;
+  }
+
+  get getPoints() {
+    return this.points;
+  }
+
+  get getRebounds() {
+    return this.rebounds;
+  }
+
+  get getMinutes() {
+    return this.min;
+  }
+
+  get getSteals() {
+    return this.steals;
+  }
+
+  get getFgPercentage() {
+    return this.fgPercentage;
+  }
+
+  get getAssists() {
+    return this.assists;
+  }
 }
 
 module.exports = PlayerSeasonStats;
