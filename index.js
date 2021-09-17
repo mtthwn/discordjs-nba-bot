@@ -1,9 +1,11 @@
+require('dotenv').config();
+
 const { Client, Collection, Intents } = require('discord.js');
 const { readdirSync } = require('fs');
 
-// const db = require('./db');
-const { DISCORD_TOKEN } = require('./config.json');
 const logger = require('./util/logger');
+
+const { DISCORD_TOKEN } = process.env;
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
