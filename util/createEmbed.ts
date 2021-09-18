@@ -1,5 +1,6 @@
 import { MessageEmbed } from 'discord.js';
-import { Player, PlayerSeasonStats } from '../models';
+import Player from '../models/Player';
+import PlayerSeasonStats from '../models/PlayerSeasonStats';
 
 export default (player: Player, stats: PlayerSeasonStats): MessageEmbed => (new MessageEmbed()
   .setColor('#0099ff')

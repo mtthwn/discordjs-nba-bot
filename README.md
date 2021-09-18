@@ -16,6 +16,9 @@ npm ci
 ```
 
 ## Running the project
+
+Please ensure that you have populated the environment variables as exemplified in the `.env.example` file prior to running the bot.
+
 ```
 make run-dev // build dist and runs start command
 ```

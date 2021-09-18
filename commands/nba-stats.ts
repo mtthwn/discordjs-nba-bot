@@ -1,7 +1,9 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
 
-import { Player, PlayerSeasonStats, Service } from '../models';
+import Player from '../models/Player';
+import PlayerSeasonStats from '../models/PlayerSeasonStats';
+import Service from '../models/Service';
 import { InvalidSeasonError, InvalidPlayerError, NoPlayerDataFoundError } from '../models/Error';
 import createEmbed from './../util/createEmbed';
 
