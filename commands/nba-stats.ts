@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
 
 import { Player, PlayerSeasonStats, Service } from '../models';
+import { InvalidSeasonError, InvalidPlayerError, NoPlayerDataFoundError } from '../models/Error';
 import createEmbed from './../util/createEmbed';
 
 const data = new SlashCommandBuilder()
@@ -34,6 +35,9 @@ export default {
   // eslint-disable-next-line
   async execute(interaction: CommandInteraction) {
     try {
+
+      await interaction.reply('Starting up the search');
+
       let firstName: string;
       let lastName: string;
 
@@ -47,17 +51,17 @@ export default {
         lastName = splitPlayerName[1];
       }
       else {
-        return await interaction.reply('Invalid player name provided');
+        throw new InvalidPlayerError('');
       }
 
       const season = await interaction.options.getInteger('season');
 
       if (!season) {
-        return await interaction.reply('Please provide a valid season');
+        throw new InvalidSeasonError(null);
       }
 
       if (season >= 2021) {
-        return await interaction.reply('Invalid season - must be the year the season started in');
+        throw new InvalidSeasonError('Invalid season - must be the year the season started in');
       }
 
       console.log(`playerData request started for ${firstName} ${lastName}`);
@@ -66,12 +70,9 @@ export default {
 
       console.log(`playerData request complete for ${firstName} ${lastName}`);
 
-      if (!playerData) {
-        console.error(`playerData not found for ${firstName} ${lastName}`);
-        return await interaction.reply('No player found');
+      if (!playerData.data) {
+        throw new InvalidPlayerError(`${firstName} ${lastName || ''}`);
       }
-
-      await interaction.reply(`Querying the results for ${fullName}'s stats in ${season}`);
 
       const embeds = [];
 
@@ -92,15 +93,13 @@ export default {
       }
 
       if (embeds.length === 0) {
-        return await interaction.reply('No data found');
+        throw new NoPlayerDataFoundError();
       }
 
       await interaction.followUp({ embeds });
     }
-    catch (e: unknown) {
-      console.error(e);
-
-      await interaction.reply('Something went wrong with your request');
+    catch (e) {
+      await interaction.followUp((e as Error).message);
     }
   },
 };
