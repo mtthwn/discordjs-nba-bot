@@ -34,3 +34,9 @@ export class NoPlayerDataFoundError extends NbaStatsError {
     super('No player data found', 400);
   }
 }
+
+export class APIError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
+}

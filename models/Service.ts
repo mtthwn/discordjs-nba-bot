@@ -1,5 +1,11 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { NBA_API_URL } from '../config';
+import { APIError } from './Error';
+
+interface NbaApiResponse {
+  status: number;
+  data: AxiosResponse['data'];
+}
 
 export default class Service {
 
@@ -14,11 +20,11 @@ export default class Service {
     this.service = service;
   }
 
-  async getPlayerInformation(firstName: string, lastName = '') {
+  async getPlayerInformation(firstName: string, lastName = ''): Promise<NbaApiResponse> {
     return await this.get(`/players?search=${firstName} ${lastName}`);
   }
 
-  async getPlayerSeasonStats(season: number, playerId: number) {
+  async getPlayerSeasonStats(season: number, playerId: number): Promise<NbaApiResponse> {
     return await this.get(`/season_averages?season=${season}&player_ids[]=${playerId}`);
   }
 
@@ -32,13 +38,14 @@ export default class Service {
       };
 
     }
-    catch (e: unknown) {
-      console.error(e);
+    catch (e) {
+      const errorCode = (e as AxiosError).code;
 
-      return {
-        status: 'FAILED',
-      };
+      if (errorCode === 'ECONNABORTED') {
+        throw new APIError('Request timed out');
+      }
+
+      throw new APIError((e as Error).message);
     }
-
   }
 }
