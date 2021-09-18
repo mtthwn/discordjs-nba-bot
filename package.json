@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --fix . && echo 'Lint complete.'",
-    "dev": "nodemon index.js"
+    "start": "node ./dist/index.js",
+    "build-dist": "./node_modules/typescript/bin/tsc"
   },
   "keywords": [],
   "author": "",
@@ -14,13 +14,17 @@
   "dependencies": {
     "@discordjs/builders": "^0.6.0",
     "@discordjs/rest": "0.1.0-canary.0",
+    "@types/node": "^16.9.2",
     "axios": "^0.21.4",
     "discord-api-types": "^0.23.1",
     "discord.js": "^13.1.0",
     "dotenv": "^10.0.0",
+    "typescript": "^4.4.3",
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.31.1",
+    "@typescript-eslint/parser": "^4.31.1",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

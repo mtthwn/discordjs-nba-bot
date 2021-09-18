@@ -1,7 +1,10 @@
 SHELL = bash
 
 run-dev:
-	node index.js
+	node dist/index.js
 
-run-deploy-commands:
-	node deploy-commands.js
+deploy-commands:
+	node dist/deploy-commands.js
+
+build-dist:
+	./node_modules/typescript/bin/tsc
