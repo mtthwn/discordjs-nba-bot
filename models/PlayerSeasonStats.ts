@@ -26,7 +26,7 @@ export default class PlayerSeasonStats {
     this.rebounds = reb.toString();
     this.min = min.toString();
     this.steals = stl.toString();
-    this.fgPercentage = (fg_pct * 100).toString().substring(0, 5) + '%';
+    this.fgPercentage = fg_pct.toLocaleString('en-US', { style: 'percent' });
     this.assists = ast.toString();
   }
 

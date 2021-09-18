@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from 'axios';
-
 export default class Service {
 
   service: AxiosInstance
@@ -13,7 +12,15 @@ export default class Service {
     this.service = service;
   }
 
-  async get(path: string) {
+  async getPlayerInformation(firstName: string, lastName = '') {
+    return await this.get(`/players?search=${firstName} ${lastName}`);
+  }
+
+  async getPlayerSeasonStats(season: number, playerId: number) {
+    return await this.get(`/season_averages?season=${season}&player_ids[]=${playerId}`);
+  }
+
+  private async get(path: string) {
     try {
       const response = await this.service.get(path);
 

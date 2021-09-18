@@ -5,16 +5,6 @@ dotenv.config();
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 
-// const foundCommands = [];
-// const commandFiles = fs
-//   .readdirSync('./commands')
-//   .filter((file: string) => file.endsWith('.js'));
-
-// for (const file of commandFiles) {
-//   import command from `./commands/${file}`;
-//   foundCommands.push(command.data.toJSON());
-// }
-
 import nbaStatsCommands from './commands/nba-stats';
 
 const commandFiles = [nbaStatsCommands.data.toJSON()];

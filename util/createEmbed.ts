@@ -1,7 +1,7 @@
 import { MessageEmbed } from 'discord.js';
 import { Player, PlayerSeasonStats } from '../models';
 
-export default (player: Player, stats: PlayerSeasonStats) => (new MessageEmbed()
+export default (player: Player, stats: PlayerSeasonStats): MessageEmbed => (new MessageEmbed()
   .setColor('#0099ff')
   .setTitle(player.getFullName)
   .setDescription(`Player stats for the ${stats.getSeason} regular season`)

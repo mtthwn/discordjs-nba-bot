@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
 
 import { Player, PlayerSeasonStats, Service } from '../models';
-import { generatePlayerSearchUrl, generatePlayerStatsUrl, createEmbed } from '../util';
+import createEmbed from './../util/createEmbed';
 
 const data = new SlashCommandBuilder()
   .setName('nba-stats')
@@ -60,7 +60,7 @@ export default {
 
       console.log(`playerData request started for ${firstName} ${lastName}`);
 
-      const { data: playerData } = await new Service().get(generatePlayerSearchUrl(firstName, lastName));
+      const { data: playerData } = await new Service().getPlayerInformation(firstName, lastName);
 
       console.log(`playerData request complete for ${firstName} ${lastName}`);
 
@@ -76,7 +76,7 @@ export default {
       for (const player of playerData.data) {
         const generatedPlayer = new Player(player);
 
-        const { data: seasonData } = await new Service().get(generatePlayerStatsUrl(season, player.id));
+        const { data: seasonData } = await new Service().getPlayerSeasonStats(season, player.id);
 
         if (seasonData.data.length === 0) {
           continue;

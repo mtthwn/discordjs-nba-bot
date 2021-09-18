@@ -31,7 +31,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
   console.log(command);
 
   try {
-    await command.default.execute(interaction);
+    await command.execute(interaction);
   }
   catch (error) {
     console.error(error);
