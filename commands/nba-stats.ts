@@ -1,7 +1,8 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { CommandInteraction } from 'discord.js';
 
-const { Player, PlayerSeasonStats, Service } = require('../classes');
-const { generatePlayerSearchUrl, generatePlayerStatsUrl, createEmbed, logger } = require('../util');
+import { Player, PlayerSeasonStats, Service } from '../models';
+import { generatePlayerSearchUrl, generatePlayerStatsUrl, createEmbed } from '../util';
 
 const data = new SlashCommandBuilder()
   .setName('nba-stats')
@@ -26,27 +27,49 @@ const data = new SlashCommandBuilder()
       ),
   );
 
-module.exports = {
+export default {
   data,
-  async execute(interaction) {
+  // eslint-disable-next-line
+  async execute(interaction: CommandInteraction) {
     try {
-      const [firstName, lastName] = await interaction.options
-        .getString('player_name')
-        .split(' ');
+      let firstName: string;
+      let lastName: string;
+
+      const fullName = await interaction.options
+        .getString('player_name');
+
+      if (fullName) {
+        const splitPlayerName = fullName.split(' ');
+
+        firstName = splitPlayerName[0];
+        lastName = splitPlayerName[1];
+      }
+      else {
+        return await interaction.reply('Invalid player name provided');
+      }
+
       const season = await interaction.options.getInteger('season');
+
+      if (!season) {
+        return await interaction.reply('Please provide a valid season');
+      }
 
       if (season >= 2021) {
         return await interaction.reply('Invalid season - must be the year the season started in');
       }
 
-      logger.info(`playerData request started for ${firstName} ${lastName || ''}`);
+      console.log(`playerData request started for ${firstName} ${lastName}`);
+
       const { data: playerData } = await new Service().get(generatePlayerSearchUrl(firstName, lastName));
-      logger.info(`playerData request complete for ${firstName} ${lastName || ''}`);
+
+      console.log(`playerData request complete for ${firstName} ${lastName}`);
 
       if (!playerData) {
-        logger.warn(`playerData not found for ${firstName} ${lastName || ''}`);
+        console.error(`playerData not found for ${firstName} ${lastName}`);
         return await interaction.reply('No player found');
       }
+
+      await interaction.reply(`Querying the results for ${fullName}'s stats in ${season}`);
 
       const embeds = [];
 
@@ -59,7 +82,7 @@ module.exports = {
           continue;
         }
 
-        const generatedSeasonStats = new PlayerSeasonStats({ ...seasonData.data[0], season });
+        const generatedSeasonStats = new PlayerSeasonStats({ ... seasonData.data[0], season });
 
         const embed = createEmbed(generatedPlayer, generatedSeasonStats);
 
@@ -70,10 +93,10 @@ module.exports = {
         return await interaction.reply('No data found');
       }
 
-      await interaction.reply({ embeds });
+      await interaction.followUp({ embeds });
     }
-    catch (e) {
-      logger.error(e.message);
+    catch (e: unknown) {
+      console.error(e);
 
       await interaction.reply('Something went wrong with your request');
     }
