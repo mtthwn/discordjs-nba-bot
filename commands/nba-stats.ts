@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
 
 import { Player, PlayerSeasonStats, Service } from '../models';
-import { generatePlayerSearchUrl, generatePlayerStatsUrl, createEmbed } from '../util';
+import createEmbed from '../util/createEmbed';
 
 const data = new SlashCommandBuilder()
   .setName('nba-stats')
@@ -42,7 +42,7 @@ export default {
         const splitPlayerName = fullName.split(' ');
 
         firstName = splitPlayerName[0];
-        lastName = splitPlayerName[1];
+        lastName = splitPlayerName[1] || '';
       }
       else {
         return await interaction.reply('Invalid player name provided');
@@ -60,7 +60,7 @@ export default {
 
       console.log(`playerData request started for ${firstName} ${lastName}`);
 
-      const { data: playerData } = await new Service().get(generatePlayerSearchUrl(firstName, lastName));
+      const { data: playerData } = await new Service().getPlayerStats(firstName, lastName);
 
       console.log(`playerData request complete for ${firstName} ${lastName}`);
 
@@ -76,7 +76,7 @@ export default {
       for (const player of playerData.data) {
         const generatedPlayer = new Player(player);
 
-        const { data: seasonData } = await new Service().get(generatePlayerStatsUrl(season, player.id));
+        const { data: seasonData } = await new Service().getPlayerSeasonStats(season, player.id);
 
         if (seasonData.data.length === 0) {
           continue;
@@ -90,7 +90,7 @@ export default {
       }
 
       if (embeds.length === 0) {
-        return await interaction.reply('No data found');
+        return await interaction.followUp('No data found');
       }
 
       await interaction.followUp({ embeds });
@@ -98,7 +98,7 @@ export default {
     catch (e: unknown) {
       console.error(e);
 
-      await interaction.reply('Something went wrong with your request');
+      await interaction.followUp('Something went wrong with your request');
     }
   },
 };
