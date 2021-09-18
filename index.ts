@@ -1,9 +1,6 @@
-import dotenv from 'dotenv';
+import { Client, Collection, Intents } from 'discord.js';
 
-dotenv.config();
-
-import { Client, Collection, Intents, Interaction } from 'discord.js';
-
+import { DISCORD_TOKEN } from './config';
 import interactionCreate from './events/interactionCreate';
 import ready from './events/ready';
 import nbaStatsCommand from './commands/nba-stats';
@@ -23,7 +20,7 @@ client.once('ready', async () => {
   console.log('Ready!');
 });
 
-client.on('interactionCreate', async (interaction: Interaction) => {
+client.on('interactionCreate', async (interaction) => {
   const command = client.commands.get(interaction.commandName);
 
   if (!command) return;
@@ -42,4 +39,4 @@ client.on('interactionCreate', async (interaction: Interaction) => {
   }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(DISCORD_TOKEN);

@@ -27,6 +27,8 @@ const data = new SlashCommandBuilder()
       ),
   );
 
+const APIService = new Service();
+
 export default {
   data,
   // eslint-disable-next-line
@@ -60,7 +62,7 @@ export default {
 
       console.log(`playerData request started for ${firstName} ${lastName}`);
 
-      const { data: playerData } = await new Service().getPlayerInformation(firstName, lastName);
+      const { data: playerData } = await APIService.getPlayerInformation(firstName, lastName);
 
       console.log(`playerData request complete for ${firstName} ${lastName}`);
 
@@ -76,7 +78,7 @@ export default {
       for (const player of playerData.data) {
         const generatedPlayer = new Player(player);
 
-        const { data: seasonData } = await new Service().getPlayerSeasonStats(season, player.id);
+        const { data: seasonData } = await APIService.getPlayerSeasonStats(season, player.id);
 
         if (seasonData.data.length === 0) {
           continue;

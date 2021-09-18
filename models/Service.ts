@@ -1,11 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
+import { NBA_API_URL } from '../config';
+
 export default class Service {
 
   service: AxiosInstance
 
   constructor() {
     const service = axios.create({
-      baseURL: 'https://www.balldontlie.io/api/v1/',
+      baseURL: NBA_API_URL,
       timeout: 5000,
     });
 
