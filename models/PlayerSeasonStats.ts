@@ -10,55 +10,55 @@ export interface PlayerSeasonStatsRequirement {
 }
 
 export default class PlayerSeasonStats {
-  season: string;
-  gamesPlayed: string;
-  points: string;
-  rebounds: string;
-  min: string;
-  steals: string;
-  fgPercentage: string;
-  assists: string;
+  private _season: string;
+  private _gamesPlayed: string;
+  private _points: string;
+  private _rebounds: string;
+  private _min: string;
+  private _steals: string;
+  private _fgPercentage: string;
+  private _assists: string;
 
   constructor({ season, games_played, pts, reb, stl, fg_pct, min, ast }: PlayerSeasonStatsRequirement) {
-    this.season = season.toString();
-    this.gamesPlayed = games_played.toString();
-    this.points = pts.toString();
-    this.rebounds = reb.toString();
-    this.min = min.toString();
-    this.steals = stl.toString();
-    this.fgPercentage = fg_pct.toLocaleString('en-US', { style: 'percent' });
-    this.assists = ast.toString();
+    this._season = season.toString();
+    this._gamesPlayed = games_played.toString();
+    this._points = pts.toString();
+    this._rebounds = reb.toString();
+    this._min = min.toString();
+    this._steals = stl.toString();
+    this._fgPercentage = fg_pct.toLocaleString('en-US', { style: 'percent', maximumSignificantDigits: 4 });
+    this._assists = ast.toString();
   }
 
   get getSeason(): string {
-    return this.season;
+    return this._season;
   }
 
   get getGamesPlayed(): string {
-    return this.gamesPlayed;
+    return this._gamesPlayed;
   }
 
   get getPoints(): string {
-    return this.points;
+    return this._points;
   }
 
   get getRebounds(): string {
-    return this.rebounds;
+    return this._rebounds;
   }
 
   get getMinutes(): string {
-    return this.min;
+    return this._min;
   }
 
   get getSteals(): string {
-    return this.steals;
+    return this._steals;
   }
 
   get getFgPercentage(): string {
-    return this.fgPercentage;
+    return this._fgPercentage;
   }
 
   get getAssists(): string {
-    return this.assists;
+    return this._assists;
   }
 }

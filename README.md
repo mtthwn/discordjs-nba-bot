@@ -17,9 +17,5 @@ npm ci
 
 ## Running the project
 ```
-make run-dev
-
-// OR
-
-npm run dev
+make run-dev // build dist and runs start command
 ```

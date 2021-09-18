@@ -7,26 +7,26 @@ interface PlayerRequirement {
 }
 
 export default class Player {
-  height: string;
-  fullName: string;
-  position: string;
+  private _height: string;
+  private _fullName: string;
+  private _position: string;
 
   constructor({ height_feet, height_inches, first_name, last_name, position }: PlayerRequirement) {
-    this.height = height_feet ? `${height_feet} ft ${height_inches} in`
+    this._height = height_feet ? `${height_feet} ft ${height_inches} in`
       : 'No height data available';
-    this.fullName = `${first_name} ${last_name}`;
-    this.position = position.length > 0 ? position : 'No position data available';
+    this._fullName = `${first_name} ${last_name}`;
+    this._position = position.length > 0 ? position : 'No position data available';
   }
 
   get getHeight(): string {
-    return this.height;
+    return this._height;
   }
 
   get getFullName(): string {
-    return this.fullName;
+    return this._fullName;
   }
 
   get getPosition(): string {
-    return this.position;
+    return this._position;
   }
 }
