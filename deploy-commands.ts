@@ -1,15 +1,12 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
+import { DISCORD_TOKEN, clientId, guildId } from './config';
 
 import nbaStatsCommands from './commands/nba-stats';
 
 const commandFiles = [nbaStatsCommands.data.toJSON()];
 
-const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
+const rest = new REST({ version: '9' }).setToken(DISCORD_TOKEN);
 
 (async () => {
   try {
@@ -18,7 +15,7 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
     console.log(commandFiles);
 
     // scoped to guild, removing guildId scopes globally
-    await rest.put(Routes.applicationGuildCommands(process.env.clientId, process.env.guildId), {
+    await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
       body: commandFiles,
     });
 
