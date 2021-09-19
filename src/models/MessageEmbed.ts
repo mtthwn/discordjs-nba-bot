@@ -1,38 +1,16 @@
-import { MessageEmbed, EmbedFieldData, ColorResolvable } from 'discord.js';
+import { MessageEmbed, EmbedFieldData } from 'discord.js';
 import Player from './Player';
 import PlayerSeasonStats from './PlayerSeasonStats';
 
-export class EmbeddedMessage {
-  private _color: ColorResolvable;
-  private _title: string;
-  private _description: string;
-  private _fields: EmbedFieldData[];
-
-  constructor(color: ColorResolvable = '#0099ff', title: string, description: string, fields: EmbedFieldData[]) {
-    this._title = title;
-    this._description = description;
-    this._fields = fields;
-    this._color = color;
-  }
-
-  generateEmbeddedMessage(): MessageEmbed {
-    return new MessageEmbed()
-      .setColor(this._color)
-      .setTitle(this._title)
-      .setDescription(this._description)
-      .addFields(...this._fields)
-      .setTimestamp()
-      .setFooter('Source: balldontlie.io');
-  }
-}
-
-export class PlayerSeasonAverageMessage extends EmbeddedMessage {
+export class PlayerSeasonAverageMessage extends MessageEmbed {
   constructor(player: Player, stats: PlayerSeasonStats) {
-    super('#009ff',
-      player.getFullName,
-      `Player stats for the ${stats.getSeason} regular season`,
-      PlayerSeasonAverageMessage.generateFields(player, stats),
-    );
+    super({
+      color: 'AQUA',
+      title: player.getFullName,
+      description: `Player stats for the ${stats.getSeason} regular season`,
+      fields: PlayerSeasonAverageMessage.generateFields(player, stats),
+      footer: { text: 'Source: balldontlie.io' }, timestamp: new Date(),
+    });
   }
 
   static generateFields(player: Player, stats: PlayerSeasonStats): EmbedFieldData[] {

@@ -2,7 +2,7 @@ import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import { DISCORD_TOKEN, clientId, guildId } from './config';
 
-import nbaStatsCommands from './commands/nba-stats';
+import nbaStatsCommands from './commands/nba-player-stats';
 
 const commandFiles = [nbaStatsCommands.data.toJSON()];
 

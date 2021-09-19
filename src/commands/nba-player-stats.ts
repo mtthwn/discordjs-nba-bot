@@ -4,11 +4,11 @@ import { CommandInteraction } from 'discord.js';
 import Player from '../models/Player';
 import PlayerSeasonStats from '../models/PlayerSeasonStats';
 import Service from '../models/Service';
-import { PlayerSeasonAverageMessage } from '../models/EmbeddedMessage';
+import { PlayerSeasonAverageMessage } from '../models/MessageEmbed';
 import { InvalidSeasonError, InvalidPlayerError, NoPlayerDataFoundError } from '../models/Error';
 
 const data = new SlashCommandBuilder()
-  .setName('nba-stats')
+  .setName('nba-player-stats')
   .setDescription('NBA player stats')
   .addSubcommand((subCommand) =>
     subCommand
@@ -24,11 +24,24 @@ const data = new SlashCommandBuilder()
         option
           .setName('season')
           .setDescription(
-            'The starting year of the season\'s stats you want to query',
+            'The starting year of the season\'s averages you want to query',
           )
           .setRequired(true),
       ),
   );
+// TODO: Add additional subcommand
+// .addSubcommand(subCommand => subCommand
+//   .setName('game-stats')
+//   .setDescription('Game stats')
+//   .addStringOption(option =>
+//     option.setName('player_name')
+//       .setDescription('Player name')
+//       .setRequired(true))
+//   .addStringOption(option =>
+//     option
+//       .setName('date')
+//       .setDescription('Date of the game')
+//       .setRequired(true)));
 
 const APIService = new Service();
 
@@ -91,7 +104,7 @@ export default {
 
         const embed = new PlayerSeasonAverageMessage(generatedPlayer, generatedSeasonStats);
 
-        embeds.push(embed.generateEmbeddedMessage());
+        embeds.push(embed);
       }
 
       if (embeds.length === 0) {

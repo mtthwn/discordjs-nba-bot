@@ -12,10 +12,10 @@ declare module 'discord.js' {
         execute: (message: Message, args: string[]) => SomeType
     }
 
-   export interface Interaction {
+    export interface Interaction {
         user: User,
         channel: InteractionChannel,
         commandName: string,
         reply: (args: SomeType) => SomeType
-      }
+    }
 }

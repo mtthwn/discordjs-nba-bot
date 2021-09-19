@@ -3,7 +3,7 @@ import { Client, Collection, Intents } from 'discord.js';
 import { DISCORD_TOKEN } from './config';
 import interactionCreate from './events/interactionCreate';
 import ready from './events/ready';
-import nbaStatsCommand from './commands/nba-stats';
+import nbaStatsCommand from './commands/nba-player-stats';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
@@ -14,7 +14,7 @@ client.on(ready.name, (...args: [any]) => ready.execute(...args));
 
 client.commands = new Collection();
 
-client.commands.set('nba-stats', nbaStatsCommand);
+client.commands.set('nba-player-stats', nbaStatsCommand);
 
 client.once('ready', async () => {
   console.log('Ready!');
