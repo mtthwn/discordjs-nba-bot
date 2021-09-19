@@ -12,8 +12,6 @@ const rest = new REST({ version: '9' }).setToken(DISCORD_TOKEN);
   try {
     console.log('Started refreshing application (/) commands.');
 
-    console.log(commandFiles);
-
     // scoped to guild, removing guildId scopes globally
     await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
       body: commandFiles,

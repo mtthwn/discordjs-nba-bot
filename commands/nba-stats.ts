@@ -4,16 +4,16 @@ import { CommandInteraction } from 'discord.js';
 import Player from '../models/Player';
 import PlayerSeasonStats from '../models/PlayerSeasonStats';
 import Service from '../models/Service';
+import { PlayerSeasonAverageMessage } from '../models/EmbeddedMessage';
 import { InvalidSeasonError, InvalidPlayerError, NoPlayerDataFoundError } from '../models/Error';
-import createEmbed from './../util/createEmbed';
 
 const data = new SlashCommandBuilder()
   .setName('nba-stats')
-  .setDescription('Get NBA stats')
+  .setDescription('NBA player stats')
   .addSubcommand((subCommand) =>
     subCommand
-      .setName('player-search')
-      .setDescription('Player search')
+      .setName('season-averages')
+      .setDescription('Season averages')
       .addStringOption((option) =>
         option
           .setName('player_name')
@@ -87,11 +87,11 @@ export default {
           continue;
         }
 
-        const generatedSeasonStats = new PlayerSeasonStats({ ... seasonData.data[0], season });
+        const generatedSeasonStats = new PlayerSeasonStats({ ...seasonData.data[0], season });
 
-        const embed = createEmbed(generatedPlayer, generatedSeasonStats);
+        const embed = new PlayerSeasonAverageMessage(generatedPlayer, generatedSeasonStats);
 
-        embeds.push(embed);
+        embeds.push(embed.generateEmbeddedMessage());
       }
 
       if (embeds.length === 0) {
