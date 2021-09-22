@@ -9,7 +9,7 @@ const APIService = new Service();
 
 export default class MessageEmbedFactory {
   // eslint-disable-next-line
-  static async create(messageType: string, interaction: CommandInteraction): Promise<PlayerSeasonAverageMessage[]> {
+  static async create(interaction: CommandInteraction): Promise<PlayerSeasonAverageMessage[]> {
     let firstName: string;
     let lastName: string;
 

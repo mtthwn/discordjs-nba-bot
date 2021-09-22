@@ -48,7 +48,7 @@ export default {
 
       await interaction.reply('Starting up the search');
 
-      const embeds = await MessageEmbedFactory.create('stuff', interaction);
+      const embeds = await MessageEmbedFactory.create(interaction);
 
       await interaction.followUp({ embeds });
     }
