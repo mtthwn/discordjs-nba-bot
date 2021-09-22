@@ -9,60 +9,69 @@ const APIService = new Service();
 
 export default class MessageEmbedFactory {
   // eslint-disable-next-line
-  static async create(interaction: CommandInteraction): Promise<PlayerSeasonAverageMessage[]> {
-    let firstName: string;
-    let lastName: string;
+  static async create(interaction: CommandInteraction): Promise<PlayerSeasonAverageMessage[] | undefined> {
 
-    const fullName = await interaction.options
-      .getString('player_name');
+    const commandName = await interaction.options.getSubcommand();
 
-    if (fullName) {
-      const splitPlayerName = fullName.split(' ');
+    if (commandName === 'sesason-averages') {
 
-      firstName = splitPlayerName[0];
-      lastName = splitPlayerName[1];
-    }
-    else {
-      throw new InvalidPlayerError('');
-    }
-    const season = await interaction.options.getInteger('season');
+      let firstName: string;
+      let lastName: string;
 
-    if (!season) {
-      throw new InvalidSeasonError(null);
-    }
+      const fullName = await interaction.options
+        .getString('player_name');
 
-    if (season >= 2021) {
-      throw new InvalidSeasonError('Invalid season - must be the year the season started in');
-    }
+      if (fullName) {
+        const splitPlayerName = fullName.split(' ');
 
-    const { data: playerData } = await APIService.getPlayerInformation(firstName, lastName);
+        firstName = splitPlayerName[0];
+        lastName = splitPlayerName[1];
+      }
+      else {
+        throw new InvalidPlayerError('');
+      }
+      const season = await interaction.options.getInteger('season');
 
-    if (!playerData.data) {
-      throw new InvalidPlayerError(`${firstName} ${lastName || ''}`);
-    }
-
-    const embeds = [];
-
-    for (const player of playerData.data) {
-      const generatedPlayer = new Player(player);
-
-      const { data: seasonData } = await APIService.getPlayerSeasonStats(season, player.id);
-
-      if (seasonData.data.length === 0) {
-        continue;
+      if (!season) {
+        throw new InvalidSeasonError(null);
       }
 
-      const generatedSeasonStats = new PlayerSeasonStats({ ...seasonData.data[0], season });
+      if (season >= 2021) {
+        throw new InvalidSeasonError('Invalid season - must be the year the season started in');
+      }
 
-      const embed = new PlayerSeasonAverageMessage(generatedPlayer, generatedSeasonStats);
+      const { data: playerData } = await APIService.getPlayerInformation(firstName, lastName);
 
-      embeds.push(embed);
+      if (!playerData.data) {
+        throw new InvalidPlayerError(`${firstName} ${lastName || ''}`);
+      }
+
+      const embeds = [];
+
+      for (const player of playerData.data) {
+        const generatedPlayer = new Player(player);
+
+        const { data: seasonData } = await APIService.getPlayerSeasonStats(season, player.id);
+
+        if (seasonData.data.length === 0) {
+          continue;
+        }
+
+        const generatedSeasonStats = new PlayerSeasonStats({ ...seasonData.data[0], season });
+
+        const embed = new PlayerSeasonAverageMessage(generatedPlayer, generatedSeasonStats);
+
+        embeds.push(embed);
+      }
+
+      if (embeds.length === 0) {
+        throw new NoPlayerDataFoundError();
+      }
+
+      return embeds;
+
     }
 
-    if (embeds.length === 0) {
-      throw new NoPlayerDataFoundError();
-    }
-
-    return embeds;
+    await interaction.followUp('Invalid command');
   }
 }
