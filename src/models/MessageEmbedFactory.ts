@@ -1,35 +1,34 @@
-import { CommandInteraction } from 'discord.js';
-import { InvalidPlayerError, InvalidSeasonError, NoPlayerDataFoundError } from './Error';
-import { PlayerSeasonAverageMessage } from './MessageEmbed';
+import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { InvalidDateError, InvalidPlayerError, InvalidSeasonError, NoPlayerDataFoundError } from './Error';
+import { PlayerGameStatsMessage, PlayerSeasonAverageMessage } from './MessageEmbed';
 import Player from './Player';
-import PlayerSeasonStats from './PlayerSeasonStats';
+import { PlayerSeasonAverages, PlayerStats } from './PlayerStats';
 import Service from './Service';
 
 const APIService = new Service();
 
 export default class MessageEmbedFactory {
   // eslint-disable-next-line
-  static async create(interaction: CommandInteraction): Promise<PlayerSeasonAverageMessage[] | undefined> {
+  static async create(interaction: CommandInteraction): Promise<MessageEmbed[]> {
+
+    const splitPlayerName = await interaction.options
+      .getString('player_name')?.split(' ');
+
+    if (!splitPlayerName) {
+      throw new InvalidPlayerError(splitPlayerName);
+    }
+
+    const { data: playerData } = await APIService.getPlayerInformation(splitPlayerName[0], splitPlayerName[1]);
+
+    if (!playerData.data) {
+      throw new NoPlayerDataFoundError();
+    }
 
     const commandName = await interaction.options.getSubcommand();
 
+    const embeds = [];
+
     if (commandName === 'sesason-averages') {
-
-      let firstName: string;
-      let lastName: string;
-
-      const fullName = await interaction.options
-        .getString('player_name');
-
-      if (fullName) {
-        const splitPlayerName = fullName.split(' ');
-
-        firstName = splitPlayerName[0];
-        lastName = splitPlayerName[1];
-      }
-      else {
-        throw new InvalidPlayerError('');
-      }
       const season = await interaction.options.getInteger('season');
 
       if (!season) {
@@ -40,14 +39,6 @@ export default class MessageEmbedFactory {
         throw new InvalidSeasonError('Invalid season - must be the year the season started in');
       }
 
-      const { data: playerData } = await APIService.getPlayerInformation(firstName, lastName);
-
-      if (!playerData.data) {
-        throw new InvalidPlayerError(`${firstName} ${lastName || ''}`);
-      }
-
-      const embeds = [];
-
       for (const player of playerData.data) {
         const generatedPlayer = new Player(player);
 
@@ -57,21 +48,50 @@ export default class MessageEmbedFactory {
           continue;
         }
 
-        const generatedSeasonStats = new PlayerSeasonStats({ ...seasonData.data[0], season });
+        const generatedSeasonStats = new PlayerSeasonAverages({ ...seasonData.data[0], season });
 
         const embed = new PlayerSeasonAverageMessage(generatedPlayer, generatedSeasonStats);
 
         embeds.push(embed);
       }
-
-      if (embeds.length === 0) {
-        throw new NoPlayerDataFoundError();
-      }
-
-      return embeds;
-
     }
 
-    await interaction.followUp('Invalid command');
+    if (commandName === 'game-stats') {
+      const date = await interaction.options.getString('date') || '';
+
+      const validatedDate = this.isValidDate(date);
+
+      for (const player of playerData.data) {
+        const generatedPlayer = new Player(player);
+
+        const { data: gameData } = await APIService.getPlayerGameStats(validatedDate, player.id);
+
+        if (gameData.data.length === 0) {
+          continue;
+        }
+
+        const generatedGameStats = new PlayerStats({ ...gameData.data[0] });
+
+        const embed = new PlayerGameStatsMessage(generatedPlayer, generatedGameStats);
+
+        embeds.push(embed);
+      }
+    }
+
+    return embeds;
+  }
+
+  static isValidDate(dateString: string): string {
+    const formattedDate = new Date(dateString);
+
+    if (formattedDate.getFullYear() > 2020) {
+      throw new InvalidDateError();
+    }
+
+    if (!formattedDate.getTime() && formattedDate.getTime() !== 0) {
+      throw new InvalidDateError();
+    }
+
+    return dateString;
   }
 }

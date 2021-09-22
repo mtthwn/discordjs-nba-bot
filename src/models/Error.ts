@@ -24,8 +24,8 @@ export class InvalidSeasonError extends NbaStatsError {
 }
 
 export class InvalidPlayerError extends NbaStatsError {
-  constructor(playerName: string) {
-    super(playerName.length > 0 ? `${playerName} is not a valid NBA player` : 'Invalid name provided', 400);
+  constructor(fullName: string[] | undefined) {
+    super(fullName ? `${fullName.join(' ')} is not a valid NBA player` : 'Invalid name provided', 400);
   }
 }
 
@@ -38,5 +38,11 @@ export class NoPlayerDataFoundError extends NbaStatsError {
 export class APIError extends Error {
   constructor(message: string) {
     super(message);
+  }
+}
+
+export class InvalidDateError extends Error {
+  constructor() {
+    super('Invalid date provided - please provide in YYYY-MM-DD format');
   }
 }

@@ -28,6 +28,10 @@ export default class Service {
     return await this.get(`/season_averages?season=${season}&player_ids[]=${playerId}`);
   }
 
+  async getPlayerGameStats(date: string, playerId: number): Promise<NbaApiResponse> {
+    return await this.get(`/stats?player_ids[]=${playerId}&dates[]=${date}`);
+  }
+
   private async get(path: string) {
     try {
       const response = await this.service.get(path);

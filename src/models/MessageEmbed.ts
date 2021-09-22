@@ -1,9 +1,9 @@
 import { MessageEmbed, EmbedFieldData } from 'discord.js';
 import Player from './Player';
-import PlayerSeasonStats from './PlayerSeasonStats';
+import { PlayerStats, PlayerSeasonAverages } from './PlayerStats';
 
 export class PlayerSeasonAverageMessage extends MessageEmbed {
-  constructor(player: Player, stats: PlayerSeasonStats) {
+  constructor(player: Player, stats: PlayerSeasonAverages) {
     super({
       color: 'AQUA',
       title: player.getFullName,
@@ -13,7 +13,7 @@ export class PlayerSeasonAverageMessage extends MessageEmbed {
     });
   }
 
-  static generateFields(player: Player, stats: PlayerSeasonStats): EmbedFieldData[] {
+  static generateFields(player: Player, stats: PlayerSeasonAverages): EmbedFieldData[] {
     return [
       {
         name: 'Position',
@@ -44,6 +44,49 @@ export class PlayerSeasonAverageMessage extends MessageEmbed {
       },
       {
         name: 'Steals per game',
+        value: stats.getSteals,
+        inline: true,
+      },
+      {
+        name: 'FG %',
+        value: stats.getFgPercentage,
+        inline: true,
+      },
+    ];
+  }
+}
+
+export class PlayerGameStatsMessage extends MessageEmbed {
+  constructor(player: Player, stats: PlayerStats) {
+    super({
+      color: 'LUMINOUS_VIVID_PINK',
+      title: player.getFullName,
+      description: 'Player stats for the requested game',
+      fields: PlayerGameStatsMessage.generateFields(player, stats),
+      footer: { text: 'Source: balldontlie.io' }, timestamp: new Date(),
+    });
+  }
+
+  static generateFields(player: Player, stats: PlayerStats): EmbedFieldData[] {
+    return [
+      { name: 'Minutes played', value: stats.getMinutes, inline: true },
+      {
+        name: 'Points',
+        value: stats.getPoints,
+        inline: true,
+      },
+      {
+        name: 'Assists',
+        value: stats.getAssists,
+        inline: true,
+      },
+      {
+        name: 'Rebounds',
+        value: stats.getRebounds,
+        inline: true,
+      },
+      {
+        name: 'Steals',
         value: stats.getSteals,
         inline: true,
       },
