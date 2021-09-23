@@ -31,7 +31,7 @@ export class InvalidPlayerError extends NbaStatsError {
 
 export class NoPlayerDataFoundError extends NbaStatsError {
   constructor() {
-    super('No player data found', 400);
+    super('No player data found', 404);
   }
 }
 
@@ -41,8 +41,8 @@ export class APIError extends Error {
   }
 }
 
-export class InvalidDateError extends Error {
+export class InvalidDateError extends NbaStatsError {
   constructor() {
-    super('Invalid date provided - please provide in YYYY-MM-DD format');
+    super('Invalid date provided - please provide in YYYY-MM-DD format and is in the past', 400);
   }
 }

@@ -57,10 +57,10 @@ export class PlayerSeasonAverageMessage extends MessageEmbed {
 }
 
 export class PlayerGameStatsMessage extends MessageEmbed {
-  constructor(player: Player, stats: PlayerStats) {
+  constructor(player: Player, stats: PlayerStats, date: string) {
     super({
       color: 'LUMINOUS_VIVID_PINK',
-      title: player.getFullName,
+      title: `${player.getFullName} stats for ${date}`,
       description: 'Player stats for the requested game',
       fields: PlayerGameStatsMessage.generateFields(player, stats),
       footer: { text: 'Source: balldontlie.io' }, timestamp: new Date(),

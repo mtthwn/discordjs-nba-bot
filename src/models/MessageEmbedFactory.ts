@@ -3,6 +3,7 @@ import { InvalidDateError, InvalidPlayerError, InvalidSeasonError, NoPlayerDataF
 import { PlayerGameStatsMessage, PlayerSeasonAverageMessage } from './MessageEmbed';
 import Player from './Player';
 import { PlayerSeasonAverages, PlayerStats } from './PlayerStats';
+import { SubCommandsEnum } from './Enum';
 import Service from './Service';
 
 const APIService = new Service();
@@ -28,7 +29,7 @@ export default class MessageEmbedFactory {
 
     const embeds = [];
 
-    if (commandName === 'sesason-averages') {
+    if (commandName === SubCommandsEnum.PLAYER_SEASON_AVERAGES) {
       const season = await interaction.options.getInteger('season');
 
       if (!season) {
@@ -56,15 +57,19 @@ export default class MessageEmbedFactory {
       }
     }
 
-    if (commandName === 'game-stats') {
+    if (commandName === SubCommandsEnum.PLAYER_GAME_STATS) {
       const date = await interaction.options.getString('date') || '';
 
-      const validatedDate = this.isValidDate(date);
+      const isValidDate = this.isValidDate(date);
+
+      if (!isValidDate) {
+        throw new InvalidDateError();
+      }
 
       for (const player of playerData.data) {
         const generatedPlayer = new Player(player);
 
-        const { data: gameData } = await APIService.getPlayerGameStats(validatedDate, player.id);
+        const { data: gameData } = await APIService.getPlayerGameStats(date, player.id);
 
         if (gameData.data.length === 0) {
           continue;
@@ -72,7 +77,7 @@ export default class MessageEmbedFactory {
 
         const generatedGameStats = new PlayerStats({ ...gameData.data[0] });
 
-        const embed = new PlayerGameStatsMessage(generatedPlayer, generatedGameStats);
+        const embed = new PlayerGameStatsMessage(generatedPlayer, generatedGameStats, date);
 
         embeds.push(embed);
       }
@@ -81,17 +86,17 @@ export default class MessageEmbedFactory {
     return embeds;
   }
 
-  static isValidDate(dateString: string): string {
+  static isValidDate(dateString: string): boolean {
     const formattedDate = new Date(dateString);
 
     if (formattedDate.getFullYear() > 2020) {
-      throw new InvalidDateError();
+      return false;
     }
 
     if (!formattedDate.getTime() && formattedDate.getTime() !== 0) {
-      throw new InvalidDateError();
+      return false;
     }
 
-    return dateString;
+    return true;
   }
 }
