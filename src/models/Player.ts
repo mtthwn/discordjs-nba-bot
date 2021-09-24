@@ -4,17 +4,20 @@ interface PlayerRequirement {
   first_name: string;
   last_name: string;
   position: string;
+  id: number;
 }
 
 export default class Player {
   private _height: string;
   private _fullName: string;
   private _position: string;
+  private _id: number;
 
-  constructor({ height_feet, height_inches, first_name, last_name, position }: PlayerRequirement) {
+  constructor({ height_feet, height_inches, first_name, last_name, position, id }: PlayerRequirement) {
     this._height = this.validateHeight(height_feet, height_inches);
     this._fullName = `${first_name} ${last_name}`;
     this._position = this.validatePosition(position);
+    this._id = id;
   }
 
   get getHeight(): string {
@@ -27,6 +30,10 @@ export default class Player {
 
   get getPosition(): string {
     return this._position;
+  }
+
+  get getId(): number {
+    return this._id;
   }
 
   validateHeight(heightFeet: number, heightInches: number): string {

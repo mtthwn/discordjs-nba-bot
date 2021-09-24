@@ -1,4 +1,6 @@
 import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { AxiosResponse } from 'axios';
+
 import { InvalidDateError, InvalidPlayerError, InvalidSeasonError, NoPlayerDataFoundError } from './Error';
 import { PlayerGameStatsMessage, PlayerSeasonAverageMessage } from './MessageEmbed';
 import Player from './Player';
@@ -17,7 +19,7 @@ export default class MessageEmbedFactory {
       .getString('player_name')?.split(' ') || [''];
 
 
-    if (!splitPlayerName || splitPlayerName.length < 2) {
+    if (!splitPlayerName || splitPlayerName.length < 1) {
       throw new InvalidPlayerError(splitPlayerName);
     }
 
@@ -30,6 +32,7 @@ export default class MessageEmbedFactory {
     const commandName = await interaction.options.getSubcommand();
 
     const embeds = [];
+    const generatedPlayers = this.generatePlayers(playerData);
 
     if (commandName === SubCommandsEnum.PLAYER_SEASON_AVERAGES) {
       const season = await interaction.options.getInteger('season') || -1;
@@ -38,10 +41,9 @@ export default class MessageEmbedFactory {
         throw new InvalidSeasonError('Invalid season - must be the year the season started in');
       }
 
-      for (const player of playerData.data) {
-        const generatedPlayer = new Player(player);
+      for (const generatedPlayer of generatedPlayers) {
 
-        const { data: seasonData } = await APIService.getPlayerSeasonStats(season, player.id);
+        const { data: seasonData } = await APIService.getPlayerSeasonStats(season, generatedPlayer.getId);
 
         if (seasonData.data.length === 0) {
           continue;
@@ -60,10 +62,9 @@ export default class MessageEmbedFactory {
         throw new InvalidDateError();
       }
 
-      for (const player of playerData.data) {
-        const generatedPlayer = new Player(player);
+      for (const generatedPlayer of generatedPlayers) {
 
-        const { data: gameData } = await APIService.getPlayerGameStats(date, player.id);
+        const { data: gameData } = await APIService.getPlayerGameStats(date, generatedPlayer.getId);
 
         if (gameData.data.length === 0) {
           continue;
@@ -102,5 +103,17 @@ export default class MessageEmbedFactory {
     }
 
     return true;
+  }
+
+  static generatePlayers(retrievedPlayers: AxiosResponse['data']): Player[] {
+    const generatedPlayers = [];
+
+    for (const player of retrievedPlayers.data) {
+      const generatedPlayer = new Player(player);
+
+      generatedPlayers.push(generatedPlayer);
+    }
+
+    return generatedPlayers;
   }
 }

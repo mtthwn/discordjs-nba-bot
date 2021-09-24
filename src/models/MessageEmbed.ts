@@ -61,8 +61,7 @@ export class PlayerGameStatsMessage extends MessageEmbed {
   constructor(player: Player, stats: PlayerGameStats, date: string) {
     super({
       color: 'LUMINOUS_VIVID_PINK',
-      title: `${player.getFullName} stats for ${date}`,
-      description: `Player stats for the game on ${stats.getDate}`,
+      title: `${player.getFullName}'s game stats for ${date}`,
       fields: PlayerGameStatsMessage.generateFields(stats),
       footer: { text: 'Source: balldontlie.io' }, timestamp: new Date(),
     });
