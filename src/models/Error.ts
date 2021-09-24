@@ -24,8 +24,8 @@ export class InvalidSeasonError extends NbaStatsError {
 }
 
 export class InvalidPlayerError extends NbaStatsError {
-  constructor(fullName: string[] | undefined) {
-    super(fullName ? `${fullName.join(' ')} is not a valid NBA player` : 'Invalid name provided', 400);
+  constructor(fullName: string[]) {
+    super(fullName.length > 1 ? `${fullName.join(' ')} is not a valid NBA player` : 'Invalid name provided - Please provide a full name', 400);
   }
 }
 

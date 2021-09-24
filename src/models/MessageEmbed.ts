@@ -1,12 +1,13 @@
 import { MessageEmbed, EmbedFieldData } from 'discord.js';
 import Player from './Player';
-import { PlayerStats, PlayerSeasonAverages } from './PlayerStats';
+import PlayerGameStats from './PlayerStats/PlayerGameStats';
+import PlayerSeasonAverages from './PlayerStats/PlayerSeasonAverages';
 
 export class PlayerSeasonAverageMessage extends MessageEmbed {
   constructor(player: Player, stats: PlayerSeasonAverages) {
     super({
       color: 'AQUA',
-      title: player.getFullName,
+      title: `${player.getFullName}'s season averages`,
       description: `Player stats for the ${stats.getSeason} regular season`,
       fields: PlayerSeasonAverageMessage.generateFields(player, stats),
       footer: { text: 'Source: balldontlie.io' }, timestamp: new Date(),
@@ -57,17 +58,17 @@ export class PlayerSeasonAverageMessage extends MessageEmbed {
 }
 
 export class PlayerGameStatsMessage extends MessageEmbed {
-  constructor(player: Player, stats: PlayerStats, date: string) {
+  constructor(player: Player, stats: PlayerGameStats, date: string) {
     super({
       color: 'LUMINOUS_VIVID_PINK',
       title: `${player.getFullName} stats for ${date}`,
-      description: 'Player stats for the requested game',
-      fields: PlayerGameStatsMessage.generateFields(player, stats),
+      description: `Player stats for the game on ${stats.getDate}`,
+      fields: PlayerGameStatsMessage.generateFields(stats),
       footer: { text: 'Source: balldontlie.io' }, timestamp: new Date(),
     });
   }
 
-  static generateFields(player: Player, stats: PlayerStats): EmbedFieldData[] {
+  static generateFields(stats: PlayerGameStats): EmbedFieldData[] {
     return [
       { name: 'Minutes played', value: stats.getMinutes, inline: true },
       {

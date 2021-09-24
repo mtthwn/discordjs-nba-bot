@@ -1,4 +1,4 @@
-export interface PlayerStatsRequirement {
+interface PlayerStatsRequirement {
   pts: number;
   reb: number;
   stl: number;
@@ -7,18 +7,7 @@ export interface PlayerStatsRequirement {
   ast: number;
 }
 
-export interface PlayerSeasonAveragesRequirement {
-  pts: number;
-  reb: number;
-  stl: number;
-  fg_pct: number;
-  min: number;
-  ast: number;
-  season: number;
-  games_played: number;
-}
-
-export class PlayerStats {
+export default class PlayerStats {
   private _points: string;
   private _rebounds: string;
   private _min: string;
@@ -57,27 +46,5 @@ export class PlayerStats {
 
   get getAssists(): string {
     return this._assists;
-  }
-}
-
-export class PlayerSeasonAverages extends PlayerStats {
-  private _season: string;
-  private _gamesPlayed: string;
-
-  constructor({ season, games_played, pts, reb, stl, fg_pct, min, ast }: PlayerSeasonAveragesRequirement) {
-    const formattedFgPercentage = fg_pct * 100;
-
-    super({ pts, reb, stl, fg_pct: formattedFgPercentage, min, ast });
-
-    this._season = season.toString();
-    this._gamesPlayed = games_played.toString();
-  }
-
-  get getSeason(): string {
-    return this._season;
-  }
-
-  get getGamesPlayed(): string {
-    return this._gamesPlayed;
   }
 }

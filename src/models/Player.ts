@@ -12,10 +12,9 @@ export default class Player {
   private _position: string;
 
   constructor({ height_feet, height_inches, first_name, last_name, position }: PlayerRequirement) {
-    this._height = height_feet ? `${height_feet} ft ${height_inches} in`
-      : 'No height data available';
+    this._height = this.validateHeight(height_feet, height_inches);
     this._fullName = `${first_name} ${last_name}`;
-    this._position = position.length > 0 ? position : 'No position data available';
+    this._position = this.validatePosition(position);
   }
 
   get getHeight(): string {
@@ -28,5 +27,21 @@ export default class Player {
 
   get getPosition(): string {
     return this._position;
+  }
+
+  validateHeight(heightFeet: number, heightInches: number): string {
+    if (!heightFeet) {
+      return 'No height data available';
+    }
+
+    return `${heightFeet} ft ${heightInches} in`;
+  }
+
+  validatePosition(position: string): string {
+    if (position.length === 0) {
+      return 'No position data available';
+    }
+
+    return position;
   }
 }

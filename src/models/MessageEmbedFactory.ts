@@ -2,7 +2,8 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
 import { InvalidDateError, InvalidPlayerError, InvalidSeasonError, NoPlayerDataFoundError } from './Error';
 import { PlayerGameStatsMessage, PlayerSeasonAverageMessage } from './MessageEmbed';
 import Player from './Player';
-import { PlayerSeasonAverages, PlayerStats } from './PlayerStats';
+import PlayerGameStats from './PlayerStats/PlayerGameStats';
+import PlayerSeasonAverages from './PlayerStats/PlayerSeasonAverages';
 import { SubCommandsEnum } from './Enum';
 import Service from './Service';
 
@@ -13,9 +14,10 @@ export default class MessageEmbedFactory {
   static async create(interaction: CommandInteraction): Promise<MessageEmbed[]> {
 
     const splitPlayerName = await interaction.options
-      .getString('player_name')?.split(' ');
+      .getString('player_name')?.split(' ') || [''];
 
-    if (!splitPlayerName) {
+
+    if (!splitPlayerName || splitPlayerName.length < 2) {
       throw new InvalidPlayerError(splitPlayerName);
     }
 
@@ -30,13 +32,9 @@ export default class MessageEmbedFactory {
     const embeds = [];
 
     if (commandName === SubCommandsEnum.PLAYER_SEASON_AVERAGES) {
-      const season = await interaction.options.getInteger('season');
+      const season = await interaction.options.getInteger('season') || -1;
 
-      if (!season) {
-        throw new InvalidSeasonError(null);
-      }
-
-      if (season >= 2021) {
+      if (!this.isValidSeason(season)) {
         throw new InvalidSeasonError('Invalid season - must be the year the season started in');
       }
 
@@ -51,18 +49,14 @@ export default class MessageEmbedFactory {
 
         const generatedSeasonStats = new PlayerSeasonAverages({ ...seasonData.data[0], season });
 
-        const embed = new PlayerSeasonAverageMessage(generatedPlayer, generatedSeasonStats);
-
-        embeds.push(embed);
+        embeds.push(new PlayerSeasonAverageMessage(generatedPlayer, generatedSeasonStats));
       }
     }
 
     if (commandName === SubCommandsEnum.PLAYER_GAME_STATS) {
       const date = await interaction.options.getString('date') || '';
 
-      const isValidDate = this.isValidDate(date);
-
-      if (!isValidDate) {
+      if (!this.isValidDate(date)) {
         throw new InvalidDateError();
       }
 
@@ -75,11 +69,9 @@ export default class MessageEmbedFactory {
           continue;
         }
 
-        const generatedGameStats = new PlayerStats({ ...gameData.data[0] });
+        const generatedGameStats = new PlayerGameStats({ ...gameData.data[0], date });
 
-        const embed = new PlayerGameStatsMessage(generatedPlayer, generatedGameStats, date);
-
-        embeds.push(embed);
+        embeds.push(new PlayerGameStatsMessage(generatedPlayer, generatedGameStats, date));
       }
     }
 
@@ -94,6 +86,18 @@ export default class MessageEmbedFactory {
     }
 
     if (!formattedDate.getTime() && formattedDate.getTime() !== 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  static isValidSeason(season: number): boolean {
+    if (!season) {
+      return false;
+    }
+
+    if (season >= 2021) {
       return false;
     }
 
