@@ -1,7 +1,7 @@
 SHELL = bash
 
 run-dev:
-	node dist/index.js
+	npx nodemon dist/index.js
 
 deploy-commands:
 	node dist/deploy-commands.js
