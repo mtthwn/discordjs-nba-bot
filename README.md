@@ -41,6 +41,14 @@ npm ci
 
 Please ensure that you have populated the environment variables as exemplified in the `.env.example` file prior to running the bot.
 
+Build the JS library:
+
 ```sh
-make run-dev // build dist and runs the bot
+make build-dist
+```
+
+Run the bot:
+
+```sh
+make run-dev
 ```

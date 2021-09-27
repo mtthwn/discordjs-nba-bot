@@ -1,6 +1,6 @@
 import PlayerStats from './PlayerStats';
 
-interface PlayerGameStatsRequirement {
+interface PlayerGameStats {
   pts: number;
   reb: number;
   stl: number;
@@ -10,10 +10,10 @@ interface PlayerGameStatsRequirement {
   date: string;
 }
 
-export default class PlayerGameStats extends PlayerStats {
+export default class extends PlayerStats {
   private _date: string;
 
-  constructor({ pts, reb, stl, fg_pct, min, ast, date }: PlayerGameStatsRequirement) {
+  constructor({ pts, reb, stl, fg_pct, min, ast, date }: PlayerGameStats) {
     super({ pts, reb, stl, fg_pct, min, ast });
 
     this._date = date;

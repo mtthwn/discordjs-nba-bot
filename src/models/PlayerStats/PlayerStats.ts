@@ -1,4 +1,4 @@
-interface PlayerStatsRequirement {
+interface PlayerStats {
   pts: number;
   reb: number;
   stl: number;
@@ -7,7 +7,7 @@ interface PlayerStatsRequirement {
   ast: number;
 }
 
-export default class PlayerStats {
+export default class {
   private _points: string;
   private _rebounds: string;
   private _min: string;
@@ -15,7 +15,7 @@ export default class PlayerStats {
   private _fgPercentage: string;
   private _assists: string;
 
-  constructor({ pts, reb, stl, fg_pct, min, ast }: PlayerStatsRequirement) {
+  constructor({ pts, reb, stl, fg_pct, min, ast }: PlayerStats) {
     this._points = pts.toString();
     this._rebounds = reb.toString();
     this._min = min.toString();
