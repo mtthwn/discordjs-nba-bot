@@ -32,6 +32,10 @@ export default class Service {
     return await this.get(`/stats?player_ids[]=${playerId}&dates[]=${date}`);
   }
 
+  async getAllTeams(): Promise<NbaApiResponse> {
+    return await this.get('teams/');
+  }
+
   private async get(path: string) {
     try {
       const response = await this.service.get(path);

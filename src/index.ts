@@ -17,7 +17,7 @@ client.commands = new Collection();
 client.commands.set('nba-player-stats', nbaStatsCommand);
 
 client.once('ready', async () => {
-  console.log('Ready!');
+  console.log('Bot loaded!');
 });
 
 client.on('interactionCreate', async (interaction) => {

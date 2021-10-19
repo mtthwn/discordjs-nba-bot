@@ -1,6 +1,6 @@
 SHELL = bash
 
-run-dev:
+run-dev: 
 	npx nodemon dist/index.js
 
 deploy-commands:
